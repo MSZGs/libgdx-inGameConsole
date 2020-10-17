@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.OrderedSet;
 import com.badlogic.gdx.utils.reflect.Annotation;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Method;
@@ -34,7 +35,7 @@ import java.util.Collections;
  */
 public abstract class AbstractConsole implements Console, Disposable {
 	protected final Log log;
-	protected CommandExecutor exec;
+	protected OrderedSet<CommandExecutor> executors;
 	protected boolean logToSystem;
 
 	protected boolean disabled;
@@ -45,6 +46,7 @@ public abstract class AbstractConsole implements Console, Disposable {
 
 	public AbstractConsole () {
 		log = new Log();
+		executors = new OrderedSet<>();
 	}
 
 	@Override public void setLoggingToSystem (Boolean log) {
@@ -98,15 +100,45 @@ public abstract class AbstractConsole implements Console, Disposable {
 		this.disabled = disabled;
 	}
 
-	@Override public void setCommandExecutor (CommandExecutor commandExec) {
-		exec = commandExec;
-		exec.setConsole(this);
+	@Deprecated	@Override public void setCommandExecutor (CommandExecutor commandExec) {
+		executors.clear();
+		addCommandExecutor(commandExec);
+		//exec = commandExec;
+		//exec.setConsole(this);
+	}
+
+	@Override public void addCommandExecutor (CommandExecutor commandExecutor) {
+		executors.add(commandExecutor);
+		commandExecutor.setConsole(this);
+	}
+
+	@Override public void removeCommandExecutor (CommandExecutor commandExecutor) {
+		executors.remove(commandExecutor);
+		commandExecutor.setConsole(null);
+	}
+
+	public boolean isHasCommandExecutor() {
+		return !executors.isEmpty();
+	}
+
+	public boolean isHasCommandExecutor(CommandExecutor commandExecutor) {
+		return executors.contains(commandExecutor);
 	}
 
 	@Override public void execCommand (String command) {
 		if (disabled)
 			return;
 
+		for (CommandExecutor exec: executors) {
+			if(execCommand(exec,command)) {
+				return;
+			};
+		}
+
+		log("No such method found.", LogLevel.ERROR);
+	}
+
+	private boolean execCommand(CommandExecutor exec,String command) {
 		log(command, LogLevel.COMMAND);
 
 		String[] parts = command.split(" ");
@@ -130,8 +162,7 @@ public abstract class AbstractConsole implements Console, Disposable {
 		}
 
 		if (possible.size <= 0) {
-			log("No such method found.", LogLevel.ERROR);
-			return;
+			return false;
 		}
 
 		int size = possible.size;
@@ -178,7 +209,7 @@ public abstract class AbstractConsole implements Console, Disposable {
 
 					m.setAccessible(true);
 					m.invoke(exec, args);
-					return;
+					return true;
 				} catch (ReflectionException e) {
 					String msg = e.getMessage();
 					if (msg == null || msg.length() <= 0) {
@@ -189,20 +220,28 @@ public abstract class AbstractConsole implements Console, Disposable {
 					if (consoleTrace) {
 						log(e, LogLevel.ERROR);
 					}
-					return;
+					return true;
 				}
 			}
 		}
-
 		log("Bad parameters. Check your code.", LogLevel.ERROR);
+		return true;
 	}
 
-	private ArrayList<Method> getAllMethods () {
+	private ArrayList<Method> getAllMethods (CommandExecutor exec) {
 		ArrayList<Method> methods = new ArrayList<Method>();
 		Class c = exec.getClass();
 		while (c != Object.class) {
 			Collections.addAll(methods, ClassReflection.getDeclaredMethods(c));
 			c = c.getSuperclass();
+		}
+		return methods;
+	}
+
+	private ArrayList<Method> getAllMethods (){
+		ArrayList<Method> methods = new ArrayList<>();
+		for (CommandExecutor exec : executors) {
+			methods.addAll(getAllMethods(exec));
 		}
 		return methods;
 	}

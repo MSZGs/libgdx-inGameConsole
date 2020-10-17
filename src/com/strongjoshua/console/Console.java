@@ -208,8 +208,34 @@ public interface Console {
 	 * to null, but this will result in no commands being fired.
 	 *
 	 * @param commandExec The {@link CommandExecutor} to use.
+	 * @deprecated Use addCommandExecutor instead.
 	 */
-	void setCommandExecutor (CommandExecutor commandExec);
+	@Deprecated void setCommandExecutor (CommandExecutor commandExec);
+
+	/**
+	 * Adds the {@link CommandExecutor} to this console.
+	 * @param commandExecutor The {@link CommandExecutor} to use.
+	 */
+	void addCommandExecutor (CommandExecutor commandExecutor);
+
+	/**
+	 * Removes the {@link CommandExecutor} to this console.
+	 * @param commandExecutor The {@link CommandExecutor} to use.
+	 */
+	void removeCommandExecutor (CommandExecutor commandExecutor);
+
+	/**
+	 *
+	 * @return True if the console has any {@link CommandExecutor}, otherwise False
+	 */
+	boolean isHasCommandExecutor();
+
+	/**
+	 *
+	 * @param commandExecutor The specific {@link CommandExecutor}
+	 * @return True if the console has the {@link CommandExecutor}, otherwise False
+	 */
+	boolean isHasCommandExecutor(CommandExecutor commandExecutor);
 
 	/**
 	 * Executes the specified command via the set {@link CommandExecutor}.

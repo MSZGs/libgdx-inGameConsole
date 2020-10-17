@@ -565,7 +565,7 @@ public class GUIConsole extends AbstractConsole {
 			if (s.length() == 0 || s.split(" ").length == 0) {
 				return false;
 			}
-			if (exec != null) {
+			if (isHasCommandExecutor()) {
 				commandHistory.store(s);
 				execCommand(s);
 			} else {
@@ -629,7 +629,7 @@ public class GUIConsole extends AbstractConsole {
 					return false;
 				}
 				if (commandCompleter.isNew()) {
-					commandCompleter.set(exec, s);
+					commandCompleter.set(executors, s);
 				}
 				input.setText(commandCompleter.next());
 				input.setCursorPosition(input.getText().length());

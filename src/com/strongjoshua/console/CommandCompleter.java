@@ -29,18 +29,20 @@ public class CommandCompleter {
 		setString = "";
 	}
 
-	public void set (CommandExecutor ce, String s) {
-		reset();
-		setString = s.toLowerCase();
-		Array<Method> methods = getAllMethods(ce);
-		for (Method m : methods) {
-			String name = m.getName();
-			if (name.toLowerCase().startsWith(setString) && ConsoleUtils.canDisplayCommand(ce.console, m)) {
-				possibleCommands.add(name);
-			}
-		}
-		iterator = new ObjectSetIterator<>(possibleCommands);
-	}
+    public void set(Iterable<CommandExecutor> ces, String s) {
+	    reset();
+        setString = s.toLowerCase();
+        for (CommandExecutor ce : ces) {
+            Array<Method> methods = getAllMethods(ce);
+            for (Method m : methods) {
+                String name = m.getName();
+                if (name.toLowerCase().startsWith(setString) && ConsoleUtils.canDisplayCommand(ce.console, m)) {
+                 possibleCommands.add(name);
+              }
+            }
+        }
+        iterator = new ObjectSetIterator<>(possibleCommands);
+    }
 
 	public void reset () {
 		possibleCommands.clear();
