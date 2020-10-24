@@ -129,6 +129,7 @@ public abstract class AbstractConsole implements Console, Disposable {
 		if (disabled)
 			return;
 
+        log(command, LogLevel.COMMAND);
 		for (CommandExecutor exec: executors) {
 			if(execCommand(exec,command)) {
 				return;
@@ -139,8 +140,6 @@ public abstract class AbstractConsole implements Console, Disposable {
 	}
 
 	private boolean execCommand(CommandExecutor exec,String command) {
-		log(command, LogLevel.COMMAND);
-
 		String[] parts = command.split(" ");
 		String methodName = parts[0];
 		String[] sArgs = null;
