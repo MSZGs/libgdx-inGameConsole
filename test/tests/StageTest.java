@@ -15,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.strongjoshua.console.CommandExecutor;
 import com.strongjoshua.console.GUIConsole;
 import com.strongjoshua.console.annotation.ConsoleDoc;
 
@@ -37,7 +36,7 @@ public class StageTest extends ApplicationAdapter {
 
 		Skin skin = new Skin(Gdx.files.classpath("tests/test_skin/uiskin.json"));
 		console = new GUIConsole(skin);
-		console.setCommandExecutor(new MyCommandExecutor());
+		console.setCommandContainer(new MyCommandExecutor());
 		console.setSizePercent(100, 50);
 
 		stage.addListener(new InputListener() {

@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.*;
-import com.strongjoshua.console.CommandExecutor;
 import com.strongjoshua.console.Console;
 import com.strongjoshua.console.GUIConsole;
 import com.strongjoshua.console.LogLevel;
@@ -25,7 +24,7 @@ public class VisUITest extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		console = new GUIConsole(VisUI.getSkin(), false, 0, VisWindow.class, VisTable.class, "default-pane", TextField.class,
 			VisTextButton.class, VisLabel.class, VisScrollPane.class);
-		console.setCommandExecutor(new MyCommandExecutor());
+		console.setCommandContainer(new MyCommandExecutor());
 		console.setSizePercent(100, 100);
 		console.setPosition(0, 0);
 		console.setVisible(true);

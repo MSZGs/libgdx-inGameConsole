@@ -19,10 +19,10 @@ package com.strongjoshua.console;
  * @author Eric
  */
 public class HeadlessConsole extends AbstractConsole {
-	/**
-	 * Creates an Headless console
-	 */
-	public HeadlessConsole () {
-		logToSystem = true;
-	}
+    /**
+     * Creates an Headless console
+     */
+    public HeadlessConsole() {
+        logToSystem = true;
+    }
 }

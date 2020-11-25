@@ -86,7 +86,7 @@ public class ConsoleTest {
 			}
 		};
 
-		headlessConsole.setCommandExecutor(commandExec);
+		headlessConsole.setCommandContainer(commandExec);
 	}
 
 	@Test public void test_StringArgument () {

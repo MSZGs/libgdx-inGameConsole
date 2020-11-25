@@ -7,13 +7,8 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ConsoleDoc {
-    String description() default "";
+public @interface ConsoleCommand {
+    String commandName() default "";
 
-    /**
-     * Put these in the same order as your actual function parameters.
-     *
-     * @return An array of parameter descriptions.
-     */
-    String[] paramDescriptions() default {};
+    String[] parameterNames() default {};
 }

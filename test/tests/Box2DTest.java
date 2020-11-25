@@ -21,7 +21,6 @@ import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.strongjoshua.console.CommandExecutor;
 import com.strongjoshua.console.Console;
 import com.strongjoshua.console.GUIConsole;
 import com.strongjoshua.console.LogLevel;
@@ -150,7 +149,7 @@ public class Box2DTest extends ApplicationAdapter {
 
 		console = new GUIConsole(new Skin(Gdx.files.classpath("tests/test_skin/uiskin.json")), false);
 		cExec = new MyCommandExecutor();
-		console.setCommandExecutor(cExec);
+		console.setCommandContainer(cExec);
 		// set to 'Z' to demonstrate that it works with binds other than the
 		// default
 		console.setDisplayKeyID(Input.Keys.Z);
