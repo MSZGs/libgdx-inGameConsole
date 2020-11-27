@@ -27,9 +27,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CommandCompleter {
-    private ObjectSet<String> possibleCommands;
+    private final ObjectSet<String> possibleCommands;
     private ObjectSetIterator<String> iterator;
     private String setString;
 
@@ -38,8 +39,8 @@ public class CommandCompleter {
         setString = "";
     }
 
-    public void completePrefix(Iterable<ICommandContainer> _commandContainers, String start) {
-        for (ICommandContainer container : _commandContainers) {
+    public void completePrefix(Iterable<ICommandContainer> commandContainers, String start) {
+        for (ICommandContainer container : commandContainers) {
             if (container.getCommandPrefix().toLowerCase().startsWith(start.toLowerCase())) {
                 possibleCommands.add(container.getCommandPrefix());
             }
@@ -59,22 +60,32 @@ public class CommandCompleter {
         if (commandContainer instanceof IConsoleAutoCompleterSupport) {
             Method[] methods = ConsoleUtils.getAllMethods(commandContainer, methodName).toArray(Method[]::new);
             for (Method method : methods) {
+                ArrayList<ParameterOption> options = new ArrayList<>();
+
                 if (method.isAnnotationPresent(ParameterOptions.class)) {
-                    Arrays.stream(method
+                    options.addAll(Arrays.asList(method
                             .getDeclaredAnnotation(ParameterOptions.class)
                             .getAnnotation(ParameterOptions.class)
-                            .value())
-                            .filter(x -> x.index() == paramIndex)
-                            .findFirst()
-                            .ifPresent(x -> {
-                                String[] a = ((IConsoleAutoCompleterSupport) commandContainer).getAutocompleteOptions(x.id());
-                                for (String k : a) {
-                                    if (k.startsWith(start)) {
-                                        possibleCommands.add(pref + " " + k);
-                                    }
-                                }
-                            });
+                            .value()));
                 }
+                if (method.isAnnotationPresent(ParameterOption.class)) {
+                    options.add(method
+                            .getDeclaredAnnotation(ParameterOption.class)
+                            .getAnnotation(ParameterOption.class));
+                }
+
+                options.stream()
+                        .filter(x -> x.index() == paramIndex)
+                        .findFirst()
+                        .ifPresent(x -> {
+                            String[] a = ((IConsoleAutoCompleterSupport) commandContainer).getAutocompleteOptions(x.id());
+                            for (String k : a) {
+                                if (k.startsWith(start)) {
+                                    possibleCommands.add(pref + " " + k);
+                                }
+                            }
+                        });
+
             }
         }
     }
